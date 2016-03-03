@@ -122,5 +122,18 @@ def metadata():
     return resp
 
 
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    if os.environ.get('SSL'):
+        print 'SSL ENABLED'
+        # from OpenSSL import SSL
+        # context = SSL.Context(SSL.SSLv23_METHOD)
+        # context.use_privatekey_file('saml/certs/sp.key')
+        # context.use_certificate_file('saml/certs/sp.cert')
+        import ssl
+        context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        context.load_cert_chain('saml/certs/sp.cert', 'saml/certs/sp.key')
+        app.run(host='0.0.0.0', port=8000, debug=True, ssl_context=context)
+    else:
+        print 'NO SSL'
+        app.run(host='0.0.0.0', port=8000, debug=True)
